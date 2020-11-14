@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { v4 as uuid } from "uuid";
 
-const Formulario = () => {
+const Formulario = ({ crearCita }) => {
   // Crear State de Citas
   const [cita, actualizarCita] = useState({
     mascota: "",
@@ -19,7 +20,7 @@ const Formulario = () => {
     console.log(evt.target.value);
     actualizarCita({
       ...cita,
-      [evt.target.name]: [evt.target.value],
+      [evt.target.name]: evt.target.value,
     });
   };
   //Cuando el usuario envia el formulario
@@ -27,8 +28,9 @@ const Formulario = () => {
     evt.preventDefault();
 
     // Validacion
+    console.log(mascota);
     if (
-      mascota.trim() === "" ||
+      mascota.trim() == "" ||
       propietario.trim() === "" ||
       fecha.trim() === "" ||
       hora.trim() === "" ||
@@ -38,13 +40,17 @@ const Formulario = () => {
       return;
     }
 
+    actualizarError(false);
+
+    var datosCita = {
+      ...cita,
+    };
     // Asignar un ID
-
+    datosCita.id = uuid();
     // Crear la Cita
-
+    crearCita(Object.freeze(datosCita));
     // Reiniciar el form
   };
-
   return (
     <>
       <h2>Crear Cita</h2>
