@@ -1,10 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Cita from "./components/Cita";
 import Formulario from "./components/Formulario";
 const App = () => {
+  let citasIniciales = JSON.parse(localStorage.getItem("citas"));
+  if (!citasIniciales) {
+    citasIniciales = [];
+  }
   // Arreglo de citas
+  let [citas, guardarCitas] = useState(citasIniciales);
 
-  const [citas, guardarCitas] = useState([]);
+  // Acciones citas localstorage
+  useEffect(() => {
+    if (citasIniciales) {
+      localStorage.setItem("citas", JSON.stringify(citas));
+    } else {
+      localStorage.setItem("citas", JSON.stringify([]));
+    }
+  }, [citas]);
 
   // Toma las citas actuales y agrega nueva
 
@@ -15,12 +27,12 @@ const App = () => {
   // Elimina una cita por su id
 
   const eliminarCita = (citaId) => {
-    console.log("hey");
     const actualizacionCitas = citas.filter((cita) => cita.id !== citaId);
-
-    console.log(actualizacionCitas);
     guardarCitas(actualizacionCitas);
   };
+
+  // Mensaje condicional
+  const titulo = citas.length === 0 ? "No hay citas" : "Administra tus citas";
   return (
     <>
       <h1>Administrador de Pacientes</h1>
@@ -30,7 +42,7 @@ const App = () => {
             <Formulario crearCita={crearCita} />
           </div>
           <div className="one-half column">
-            <h2>Administra tus citas</h2>
+            <h2>{titulo}</h2>
             {citas.map((cita) => (
               <Cita key={cita.id} cita={cita} eliminarCita={eliminarCita} />
             ))}
